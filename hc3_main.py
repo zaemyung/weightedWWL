@@ -163,8 +163,8 @@ def run_train_test(K0_s, D_s ,Dw_s, ys, train_index, test_index, num_iterations)
 
 
 def main():
-    # domains = ['finance', 'medicine', 'open_qa', 'reddit_eli5', 'wiki_csai']
-    domains = ['finance', 'medicine', 'open_qa', 'reddit_eli5']
+    domains = ['finance', 'medicine', 'open_qa', 'wiki_csai', 'reddit_eli5']
+    # domains = ['finance', 'medicine', 'open_qa', 'reddit_eli5']
     # domains = ['wiki_csai']
     for domain in domains:
         print('-----------------')
@@ -182,8 +182,8 @@ def main():
 
         # Running training
         begin = time.time()
-        # compute_subtree_scores(Gs, WLSubtreeKernels, ys, num_iterations, domain)
-        run_cv_for_training(Gs, WLSubtreeKernels, ys, num_iterations)
+        compute_subtree_scores(Gs, WLSubtreeKernels, ys, num_iterations, domain)
+        # run_cv_for_training(Gs, WLSubtreeKernels, ys, num_iterations)
 
         end = time.time()
         print("total running time of the program is :", end - begin)
