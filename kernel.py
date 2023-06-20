@@ -141,12 +141,12 @@ def wl_embeddings(Gs, h):
 	Gs_list = wl._fit_transform(Gs, h)
 	id2labels = wl._inv_label_dicts
 	n = len(Gs)
-	
+
 	label_sequences = [
 		np.full((len(G.nodes),h+1),np.nan) for G in Gs]
 	total = 0
 	for it in range(0, h+1):
-		#if it==0: 
+		#if it==0:
 		#	continue
 		G_s = Gs_list[it]
 		id2label = id2labels[it]
@@ -234,11 +234,14 @@ def learnOneEpoch(Gs, ys, num_iterations, full_batch = True):
 	ws, shrunk_list = optimize_ws(Gs_list, ys, id2labels, train_index, test_index, num_iterations, beta, n_epoch=1, minibatch=minibatch)
 
 
-def LearnParametricDistance(Gs, ys, num_iterations, is_weight, train_index, test_index):
+def LearnParametricDistance(Gs, ys, num_iterations, is_weight, train_index, test_index, return_weights=False):
 	n = len(Gs)
 	wl = WL()
 	Gs_list = wl._fit_transform(Gs, num_iterations)
 	id2labels = wl._inv_label_dicts
+	# for i in range(len(id2labels)):
+	# 	print(f'len(id2labels[i]): {len(id2labels[i])}')
+	# 	# print(id2labels[i])
 	ws = []
 	beta = 0.001
 	distances =[]
@@ -267,7 +270,7 @@ def LearnParametricDistance(Gs, ys, num_iterations, is_weight, train_index, test
 					xj = xj/np.sum(xj)
 
 					ind, feat = _w_distance_FE(np.ones(len(id2label)), ind_i, xi, ind_j, xj, id2label)
-					dist_it = np.dot(ws[it][ind], feat) 
+					dist_it = np.dot(ws[it][ind], feat)
 					dist += dist_it
 				distance = 1 - 1.0/(n_iters+1) * dist
 				#if i == j:
@@ -278,4 +281,11 @@ def LearnParametricDistance(Gs, ys, num_iterations, is_weight, train_index, test
 				D[i,j] = distance
 		D = D + D.T
 		distances.append(D)
+	if is_weight:
+		print(f'len(ws):{len(ws)}')
+		for i in range(len(ws)):
+			print(f'ws[{i}].shape: {ws[i].shape}')
+			# print(f'ws[i]: {ws[i]}')
+	if return_weights:
+		return distances, ws, id2labels, wl
 	return distances

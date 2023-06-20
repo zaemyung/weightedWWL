@@ -82,7 +82,7 @@ class WL():
 		self._label_dicts[0] = copy.deepcopy(self._preprocess_relabel_dict)
 		self._inv_label_dicts[0] = reverse_dic(self._label_dicts[0])
 
-		
+
 		for it in np.arange(0, n_iterations+1):
 			self._reset_label_generation()
 			self._label_dict = {}

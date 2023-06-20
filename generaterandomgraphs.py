@@ -1,4 +1,6 @@
 import networkx as nx
+import os
+import pickle
 import math
 import itertools
 import matplotlib.pyplot as plt
@@ -69,14 +71,14 @@ def gnp_random_graph_pos(n, p, seed=None):
 			number = random.uniform(0,1)
 			if number < p:
 				G.add_edge(i, j)
-	
 
-	#nx.draw_networkx_labels(G,pos=nx.spring_layout(G))
-	#nx.draw(G)
-	#plt.draw()
-	#plt.show()
+
+	# nx.draw_networkx_labels(G,pos=nx.spring_layout(G))
+	# nx.draw(G)
+	# plt.draw()
+	# plt.show()
 	return G
-	
+
 
 def simulationdata(nGs, n, p):
 	Gs= []
@@ -91,8 +93,38 @@ def simulationdata(nGs, n, p):
 	return Gs, labels
 
 
+def load_hc3_dataset(domain, folder_path='/Users/zaemyungkim/Development/human_vs_machine_texts/discourse_parsed'):
+	def load_graphs(domain):
+		path = os.path.join(folder_path, f'graphs_for_{domain}.pkl')
+		with open(path, 'rb') as f:
+			return pickle.load(f)
 
+	# hc3_graphs = {
+    #     'finance': load_graphs('finance'),
+    #     'medicine': load_graphs('medicine'),
+    #     'open_qa': load_graphs('open_qa'),
+    #     'reddit_eli5': load_graphs('reddit_eli5'),
+    #     'wiki_csai': load_graphs('wiki_csai')
+    # }
 
+	hc3_graphs = load_graphs(domain)
+	# print(hc3_graphs['chatgpt'][0])
+	Gs = []
+	labels = []
+	for chatgpt, human in zip(hc3_graphs['chatgpt'], hc3_graphs['human']):
+		assert chatgpt['id'] == human['id']
+		chatgpt_graph = chatgpt['graph']
+		human_graph = human['graph']
+		for node in chatgpt_graph.nodes():
+			chatgpt_graph.nodes[node]['label'] = chatgpt_graph.nodes[node]['label_0']
+		for node in human_graph.nodes():
+			human_graph.nodes[node]['label'] = human_graph.nodes[node]['label_0']
+		Gs.append(chatgpt_graph)
+		labels.append(-1)
+		Gs.append(human_graph)
+		labels.append(1)
+
+	return Gs, labels
 
 #gnp_random_graph_neg(20, 0.2)
 

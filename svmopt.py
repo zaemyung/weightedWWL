@@ -49,7 +49,7 @@ def new_hinge_loss(ws, shrunk_list, Gs_list, ys, B1, id2labels, beta, beta_list,
 				Gi = Gs_list[i][it]
 				ind_i = [int(Gi.nodes[node]['label']) for node in Gi.nodes]
 				ind_i, xi = np.unique(ind_i, return_counts=True)
-				
+
 				#print(ind_i, xi, np.sum(xi), xi/np.sum(xi))
 				xi = xi/np.sum(xi)
 
@@ -58,7 +58,7 @@ def new_hinge_loss(ws, shrunk_list, Gs_list, ys, B1, id2labels, beta, beta_list,
 				ind_j, xj = np.unique(ind_j, return_counts=True)
 				xj = xj/np.sum(xj)
 
-				
+
 
 
 				#St, Dt = new_node_distance(ind_i, ind_j, id2label)
@@ -70,7 +70,7 @@ def new_hinge_loss(ws, shrunk_list, Gs_list, ys, B1, id2labels, beta, beta_list,
 				#print("dkm", dist_it_tmp, dist_it)
 
 				dist += dist_it
-			dist = 1.0 - 1.0/(num_iterations+1) * dist 
+			dist = 1.0 - 1.0/(num_iterations+1) * dist
 			#dist = min(max(dist, 0.0),1.0)
 			if ys[i]*ys[j] == 1:
 				loss = max(0, dist - B2)
@@ -97,7 +97,7 @@ def Update(ws, shrunk_list, B1, grads, grad_B1, lr, beta, beta_list, num_iterati
 		if len(grad) != 0:
 			for it in range(1, num_iterations+1):
 				i = ind[it]
-				ws[it][i] = ws[it][i] - lr/b * (grad[it]) 
+				ws[it][i] = ws[it][i] - lr/b * (grad[it])
 	for it in range(1, num_iterations+1):
 		beta_=beta_list[it]
 		shrunk = shrunk_list[it]
@@ -121,7 +121,7 @@ def HingeGrad(ws, Gs_list, ys, B1, id2labels, beta, beta_list,num_iterations):
 			dist = 0.0
 			tmps_feat = []
 			tmps_ind = []
-			
+
 			for it in range(0, num_iterations + 1):
 				id2label = id2labels[it]
 				Gi = Gs_list[i][it]
@@ -134,7 +134,7 @@ def HingeGrad(ws, Gs_list, ys, B1, id2labels, beta, beta_list,num_iterations):
 				ind_j, xj = np.unique(ind_j, return_counts = True)
 				xj = xj/np.sum(xj)
 				ind, feat = _w_distance_FE(np.ones(len(id2label)), ind_i, xi, ind_j, xj, id2label)
-				
+
 				tmps_feat.append(- 1.0/(num_iterations+1)*feat)
 				tmps_ind.append(ind)
 				# skip level 0: atoms
@@ -147,7 +147,7 @@ def HingeGrad(ws, Gs_list, ys, B1, id2labels, beta, beta_list,num_iterations):
 			yi = ys[i]
 			yj = ys[j]
 			if yi == yj:
-				loss = max(0, dist - B2) 
+				loss = max(0, dist - B2)
 			else:
 				loss = max(0, B1 - dist)
 			reg = 0.0
@@ -259,7 +259,7 @@ def optimize_ws(Gs_list, ys, id2labels, train_index, test_index, num_iterations,
 	n_epoch = n_epoch
 
 	for e in range(n_epoch):
-		#print(ws)
+		# print(ws)
 		coupled = list(zip(Gs_train, y_train))
 		np.random.shuffle(coupled)
 		G_shuff, y_shuff = zip(*coupled)
@@ -278,7 +278,7 @@ def optimize_ws(Gs_list, ys, id2labels, train_index, test_index, num_iterations,
 			ws, B1 = Update(ws, shrunk_list, B1, grad_w_b, grad_B1_b, lr, beta, beta_list ,num_iterations, inds)
 			#print(ws)
 			total_loss += loss_b
-		#print(e, ws)
+		# print(e, ws)
 
 	return ws, shrunk_list
 
